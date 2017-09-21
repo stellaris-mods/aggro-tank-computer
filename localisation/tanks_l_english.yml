@@ -1,0 +1,46 @@
+﻿l_english:
+
+# These overwrite vanilla text that was completely redundant
+# Really stupid with this repetition everywhere, it's enough to say something one time in the same fucking tooltip.
+# "Damage: 1-25", NO SHIT that's a hostile effect.
+# "Monthly Hull ...", you REALLY think we need to be told this affects friendlies? what the fuck
+AURA_APPLY_ON_FRIENDLY: ""
+AURA_APPLY_ON_HOSTILE: ""
+#AURA_APPLY_ON_FRIENDLY: "Effect on Allied Ships:"
+#AURA_APPLY_ON_HOSTILE: "Effect on Hostile Ships:"
+
+TANK_BEHAVIOR_DESC: "§HTank-behavior:§! The ship will charge straight at enemies and try do draw their fire.\n\n§RTanks do not get any bonuses from friendly auras, if there are any.§!"
+
+folktank_1: "Tank Computer"
+folktank_2: "Advanced Tank Computer"
+folktank_3: "Superior Tank Computer"
+
+COMPUTER_FOLK_BATTLESHIP_1: "$folktank_1$"
+COMPUTER_FOLK_BATTLESHIP_2: "$folktank_2$"
+COMPUTER_FOLK_BATTLESHIP_3: "$folktank_3$"
+
+COMPUTER_FOLK_CRUISER_1: "$folktank_1$"
+COMPUTER_FOLK_CRUISER_2: "$folktank_2$"
+COMPUTER_FOLK_CRUISER_3: "$folktank_3$"
+
+COMPUTER_FOLK_DESTROYER_1: "$folktank_1$"
+COMPUTER_FOLK_DESTROYER_2: "$folktank_2$"
+COMPUTER_FOLK_DESTROYER_3: "$folktank_3$"
+
+COMPUTER_FOLK_DREADNOUGHT_1: "$folktank_1$"
+COMPUTER_FOLK_DREADNOUGHT_2: "$folktank_2$"
+COMPUTER_FOLK_DREADNOUGHT_3: "$folktank_3$"
+
+COMPUTER_FOLK_HEAVY_1: "$folktank_1$"
+COMPUTER_FOLK_HEAVY_2: "$folktank_2$"
+COMPUTER_FOLK_HEAVY_3: "$folktank_3$"
+
+
+tank_aura: "This ship should be able to hold the line for years versus at least 3 ships of similar displacement."
+
+# Never seen by player
+tech_force: "Force Ship Update"
+tech_force_desc: "Forces the AI to update their ship designs. Jeez.\n\n"
+
+# Debug
+FUCKYOUCOMPUTER: "PDXPLZ"

@@ -1,0 +1,62 @@
+[h1][b]Want your ships to charge forward with a complete disregard for health or safety? Then you've come to the right place.[/b][/h1]
+
+This mods adds 3 combat computers that unlock along with the standard ones in the game (level 1, 2, and sentient, but nothing for precog yet).
+
+The computers change the behavior of the ships in several ways; depending on ship type.
+[list]
+[*]Increase maintenance cost
+[*]Increase combat speed to match Corvettes (with thrusters level 4 and 0 boosters equipped)
+[*]Increased hullpoints, shields, evasion, and armor
+[*]Adds hull regen % (like the military station aura)
+[/list]
+And many other tweaks individually per ship type.
+The tank computers are designed such that a ship equipped with a level 3 computer will survive indefinitely against 3 non-tank versions of the same ship type.
+But it will die vs 4 of them. This has not been re-tested for 1.3.2, yet.
+
+This scales up to fleet level, so if your fleet has 1x Tank Battleship, and the enemy has 3x artillery/tachyon/arc emitter XL Battleships (for example), you should eventually win. Provided the rest of your fleet composition within a few thousand power points of the enemy fleet.
+
+Tank ships are not affected by friendly auras from Stellaris vanilla, from either military stations, or if they add them back to ships in some form. Friendly auras from 3rd party addons will affect them.
+
+The computers also change the ship behavior, so that it will actually charge in to a minimum distance. Ships equipped with these computers will charge directly at enemy fleets, disregarding collisions and kill anything they find.
+Please be aware that the ship armor bonus is a percentage bonus of the ships base armor plus any equipped armor. Also note that any ship can not have more than 90% total damage reduction from armor, so tweak your designs accordingly.
+
+Try to keep the number of tanking ships at a minimum, because their brains are not equipped for strategic target choices for their weapons output. Not to mention the upkeep cost is horrible ;-)
+Rebuild often!
+
+These computers are only available for Destroyer and bigger, not Corvette.
+
+Support for ships from [url=http://steamcommunity.com/sharedfiles/filedetails/?id=725596168]Realistic Ships[/url] and [url=https://steamcommunity.com/sharedfiles/filedetails/?id=683230077]NSC[/url] is built in. To my amazement, ISBS basically has tanking-computers already :-P
+
+[h1]AI Empires[/h1]
+Standard AI empires will sometimes construct Destroyers, Cruisers, or Battleships with tanking computers in them.
+I'm not sure how well this is tuned at the moment. I have ran games into year 2400, and seen the AI build them, but I don't know the ratio to normal ships.
+
+Basically Paradox doesn't want us modders to be able to control the AI like I have done here.
+
+So, for anyone curious, or anyone who wants to get technical, here's how it works:
+[olist]
+[*]If they have the tech for tank computers + Destroyer
+[*]Every month, there is a 10% chance that an AI empire will produce ships with this computer
+[*]Usage priority of tank computers is set to a higher number than standard computers for this empire
+[*]They are forced to auto-update their auto-ship-designs (which selects components based on said priority)
+[*]They are forced to produce at least one ship, either Destroyer, Cruiser, or Battleship, with the computer.
+[/olist]
+
+For any modders, I've done a [url=https://forum.paradoxplaza.com/forum/index.php?threads/how-to-make-the-ai-use-a-specific-ship-component.978013/]more detailed writeup.[/url] Also, I've [url=http://www.stellariswiki.com/Ship_modding]documented the ship behavior[/url] coding to a large degree.
+
+[h1]Got some feedback?[/h1]
+I really want some feedback on this right now, there's many of the values that probably need loads of tuning.
+Mostly I'm not sure about the shield regen, hull regen and combat speed.
+The behavior works fine, so the ships do charge, and all the regen works - I just think perhaps the amount of regen needs to be adjusted.
+There's also quite a steep power draw from the combat computers, but I use this mod along with my other mod, [url=https://steamcommunity.com/sharedfiles/filedetails/?id=776095610]"Ship Power Stations"[/url] (obviously hehe).
+
+Please let me know what you think!
+[b]If anyone can help me make some better ingame icons, then please contact me :-)[/b]
+
+[h1]Please check out my other addons![/h1]
+[url=http://steamcommunity.com/sharedfiles/filedetails/?id=786514324][img]http://i.imgur.com/XLkY9rP.png[/img][/url] [url=http://steamcommunity.com/sharedfiles/filedetails/?id=790840932][img]http://i.imgur.com/HB3mzUd.png[/img][/url]
+[url=http://steamcommunity.com/sharedfiles/filedetails/?id=787280885][img]http://i.imgur.com/QbwKam7.png[/img][/url] [url=http://steamcommunity.com/sharedfiles/filedetails/?id=785719197][img]http://i.imgur.com/Qowgmu2.png[/img][/url]
+[url=http://steamcommunity.com/sharedfiles/filedetails/?id=776095610][img]http://i.imgur.com/557d0qz.png[/img][/url] [url=http://steamcommunity.com/sharedfiles/filedetails/?id=785582857][img]http://i.imgur.com/c85HK9A.png[/img][/url]
+[url=http://steamcommunity.com/sharedfiles/filedetails/?id=779729987][img]http://i.imgur.com/hGJdX51.png[/img][/url] [url=http://steamcommunity.com/sharedfiles/filedetails/?id=796214744][img]http://i.imgur.com/HmbP3Gd.png[/img][/url]
+[url=http://steamcommunity.com/sharedfiles/filedetails/?id=799159083][img]http://i.imgur.com/IVM6B6g.png[/img][/url]
+[url=http://steamcommunity.com/workshop/filedetails/?id=779739023]And many others :-)[/url]

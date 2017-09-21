@@ -1,0 +1,69 @@
+ #aura_category_offensive:0 "Offensive Aura"
+ #aura_type_debuff:0 "Inhibitor"
+ #aura_shield_dampener:0 "$aura_category_offensive$ - $aura_type_debuff$"
+
+	friendly_aura = {
+		name = "tank_aura"
+		radius = 5
+		apply_on = ships # ships or fleets only
+
+		stack_info = {
+			id = tank_hostile_aura
+			priority = 1
+		}
+		modifier = {
+			#ship_shield_hp_mult = -0.20
+			ship_shield_hp_mult = 0.20
+		}
+		#damage_per_day = {
+		#	accuracy = 1
+		#	damage = 15
+		#	shield_penetration = 1
+		#	armor_penetration = 1
+		#}
+
+#entity = {
+#	name = "circle_area_entity"
+#	pdxmesh = "circle_area_mesh"
+#	scale = 1.069
+#	game_data = {
+#		shader_type = aura
+#	}
+#}
+#FLEET_EFFECT_ENTITIES = {
+#	"ship_repair_entity",		-- when repairing
+#	"ship_upgrade_entity",		-- when upgrading
+#	"ship_orbit_entity",		-- when orbiting
+#	""							-- when idling
+#},
+		graphics = {
+			#area_effect = {
+			#	entity = "circle_area_entity"
+			#	dynamic_scale = yes
+			#}
+			#ship_effect = {
+			#	entity = "ship_aura_negative_entity"
+			#	dynamic_scale = no
+			#}
+			#ship_aura_minefield_entity
+			#ship_aura_positive_entity
+			#ship_aura_negative_entity
+			#ship_aura_repair_entity
+			#ship_repair_entity
+			#ship_upgrade_entity
+			#ship_orbit_entity
+
+			#ship_aura_positive_entity
+			#area_effect = {
+			#	entity = "mine_field_small_entity"
+			#	dynamic_scale = no
+			#}
+			ship_effect = {
+				entity = "folk_tanks_ent"
+				dynamic_scale = no
+			}
+			#wormhole_incoming_entity
+			#warp_ftl_ship_effect_entity
+			#hyperlane_ftl_ship_effect_entity
+		}
+	}

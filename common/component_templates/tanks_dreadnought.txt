@@ -1,0 +1,225 @@
+utility_component_template = {
+	key = "COMPUTER_FOLK_DREADNOUGHT_1"
+	size = small
+	icon = "GFX_ship_part_computer_tank_basic"
+	icon_frame = 1
+	power = -50
+	cost = 1400
+	class_restriction = { shipclass_military }
+	size_restriction = { Dreadnought rs_dreadnought }
+	component_set = "combat_computers"
+	ship_behavior = "behavior_tank_dreadnought"
+	prerequisites = { "tech_combat_computers_1" }
+	upgrades_to = "COMPUTER_FOLK_DREADNOUGHT_2"
+	ship_modifier = {
+		ship_weapon_damage = 0
+		ship_fire_rate_mult = -0.7
+	}
+	modifier = {
+		ship_upkeep_mult = 0.2
+		ship_evasion_mult = 0
+		ship_combat_speed_mult = 5.4
+		ship_evasion_add = 0
+
+		ship_hitpoints_mult = 0.75
+		ship_shield_hp_mult = 0.75
+		ship_armor_mult = 0.3
+		ship_auto_repair_add = 0.4
+		ship_shield_regen_add = 0
+		ship_shield_regen_mult = 0
+	}
+	# Prevent us from getting the effect of other support auras I guess?
+	# At least we tried.
+	friendly_aura = {
+		name = "tank_aura"
+		radius = 1
+		apply_on = ships
+		stack_info = {
+			id = friendly_support_aura
+			priority = 100
+		}
+	}
+	target_weights = {
+		corvette = 6000
+		destroyer = 7000
+		cruiser = 8000
+		battleship = 9000
+		titan = 10000
+		leviathan = 11000
+		rs_battlecruiser = 8500
+		rs_dreadnought = 9500
+		rs_heavy_dreadnought_type_a = 9750
+		rs_heavy_dreadnought_type_b = 9750
+		rs_heavy_dreadnought_type_c = 9750
+		rs_heavy_dreadnought_type_d = 9750
+		rs_heavy_dreadnought_type_e = 9750
+		rs_heavy_dreadnought_type_f = 9750
+		rs_heavy_dreadnought_type_g = 9750
+		rs_ea_cruiser = 7500
+		rs_support_cruiser = 7200
+		Frigate = 7100
+		LightCarrier = 8100
+		StrikeCruiser = 8800
+		Battlecruiser = 8500
+		Carrier = 9500
+		Dreadnough = 9750
+		Superdreadnought = 10000
+	}
+	ai_weight = {
+		weight = 0
+		modifier = {
+			weight = 998
+			has_country_flag = folk_tanks_ai_use
+		}
+	}
+}
+utility_component_template = {
+	key = "COMPUTER_FOLK_DREADNOUGHT_2"
+	size = small
+	icon = "GFX_ship_part_computer_tank_advanced"
+	icon_frame = 1
+	power = -60
+	cost = 1900
+	class_restriction = { shipclass_military }
+	size_restriction = { Dreadnought rs_dreadnought }
+	component_set = "combat_computers"
+	ship_behavior = "behavior_tank_dreadnought"
+	prerequisites = { "tech_combat_computers_2" }
+	upgrades_to = "COMPUTER_FOLK_DREADNOUGHT_3"
+	ship_modifier = {
+		ship_weapon_damage = 0
+		ship_fire_rate_mult = -0.6
+	}
+	modifier = {
+		ship_upkeep_mult = 0.2
+		ship_evasion_mult = 0
+		ship_combat_speed_mult = 5.4
+		ship_evasion_add = 0
+
+		ship_hitpoints_mult = 1
+		ship_shield_hp_mult = 1
+		ship_armor_mult = 0.3
+		ship_auto_repair_add = 0.4
+		ship_shield_regen_add = 0
+		ship_shield_regen_mult = 0
+	}
+	# Prevent us from getting the effect of other support auras I guess?
+	# At least we tried.
+	friendly_aura = {
+		name = "tank_aura"
+		radius = 1
+		apply_on = ships
+		stack_info = {
+			id = friendly_support_aura
+			priority = 100
+		}
+	}
+	target_weights = {
+		corvette = 6000
+		destroyer = 7000
+		cruiser = 8000
+		battleship = 9000
+		titan = 10000
+		leviathan = 11000
+		rs_battlecruiser = 8500
+		rs_dreadnought = 9500
+		rs_heavy_dreadnought_type_a = 9750
+		rs_heavy_dreadnought_type_b = 9750
+		rs_heavy_dreadnought_type_c = 9750
+		rs_heavy_dreadnought_type_d = 9750
+		rs_heavy_dreadnought_type_e = 9750
+		rs_heavy_dreadnought_type_f = 9750
+		rs_heavy_dreadnought_type_g = 9750
+		rs_ea_cruiser = 7500
+		rs_support_cruiser = 7200
+		Frigate = 7100
+		LightCarrier = 8100
+		StrikeCruiser = 8800
+		Battlecruiser = 8500
+		Carrier = 9500
+		Dreadnough = 9750
+		Superdreadnought = 10000
+	}
+	ai_weight = {
+		weight = 0
+		modifier = {
+			weight = 999
+			has_country_flag = folk_tanks_ai_use
+		}
+	}
+}
+utility_component_template = {
+	key = "COMPUTER_FOLK_DREADNOUGHT_3"
+	size = small
+	icon = "GFX_ship_part_computer_tank_super"
+	icon_frame = 1
+	power = -70
+	cost = 2500
+	class_restriction = { shipclass_military }
+	size_restriction = { Dreadnought rs_dreadnought }
+	component_set = "combat_computers"
+	ship_behavior = "behavior_tank_dreadnought"
+	prerequisites = { "tech_combat_computers_3" }
+	upgrades_to = ""
+	ship_modifier = {
+		ship_weapon_damage = 0
+		ship_fire_rate_mult = -0.5
+	}
+	modifier = {
+		ship_upkeep_mult = 0.2
+		ship_evasion_mult = 0
+		ship_combat_speed_mult = 5.4
+		ship_evasion_add = 0
+
+		ship_hitpoints_mult = 1.25
+		ship_shield_hp_mult = 1.25
+		ship_armor_mult = 0.3
+		ship_auto_repair_add = 0.4
+		ship_shield_regen_add = 0
+		ship_shield_regen_mult = 0
+	}
+	# Prevent us from getting the effect of other support auras I guess?
+	# At least we tried.
+	friendly_aura = {
+		name = "tank_aura"
+		radius = 1
+		apply_on = ships
+		stack_info = {
+			id = friendly_support_aura
+			priority = 100
+		}
+	}
+	target_weights = {
+		corvette = 6000
+		destroyer = 7000
+		cruiser = 8000
+		battleship = 9000
+		titan = 10000
+		leviathan = 11000
+		rs_battlecruiser = 8500
+		rs_dreadnought = 9500
+		rs_heavy_dreadnought_type_a = 9750
+		rs_heavy_dreadnought_type_b = 9750
+		rs_heavy_dreadnought_type_c = 9750
+		rs_heavy_dreadnought_type_d = 9750
+		rs_heavy_dreadnought_type_e = 9750
+		rs_heavy_dreadnought_type_f = 9750
+		rs_heavy_dreadnought_type_g = 9750
+		rs_ea_cruiser = 7500
+		rs_support_cruiser = 7200
+		Frigate = 7100
+		LightCarrier = 8100
+		StrikeCruiser = 8800
+		Battlecruiser = 8500
+		Carrier = 9500
+		Dreadnough = 9750
+		Superdreadnought = 10000
+	}
+	ai_weight = {
+		weight = 0
+		modifier = {
+			weight = 1000
+			has_country_flag = folk_tanks_ai_use
+		}
+	}
+}

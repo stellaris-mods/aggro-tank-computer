@@ -1,0 +1,168 @@
+namespace = tankdebug
+
+# debugfriendlylocation
+# debuglocation = enemy location
+# debugcountry = enemy
+# debugplayer = player
+
+event = {
+	id = tankdebug.1
+	is_triggered_only = yes
+	hide_window = yes
+	immediate = {
+		ensure_debug_player = yes
+		ensure_debug_location = yes
+		ensure_debug_friendlylocation = yes
+		ensure_debug_country = yes
+
+		# debug 1
+		create_fleet = {
+			name = "Debug Fleet 1"
+			settings = { spawn_debris = no }
+			effect = {
+				set_owner = event_target:debugcountry
+				create_ship = {
+					name = "Debugger 1"
+					design = "debug1"
+					graphical_culture = "mammalian_01"
+				}
+				set_location = event_target:debuglocation
+			}
+		}
+
+		# debug 2
+		create_fleet = {
+			name = "Debug Fleet 2"
+			settings = { spawn_debris = no }
+			effect = {
+				set_owner = event_target:debugcountry
+				create_ship = {
+					name = "Debugger 2"
+					design = "debug2"
+					graphical_culture = "mammalian_01"
+				}
+				set_location = event_target:debuglocation
+			}
+		}
+
+		# debug 3
+		create_fleet = {
+			name = "Debug Fleet 3"
+			settings = { spawn_debris = no }
+			effect = {
+				set_owner = event_target:debugcountry
+				create_ship = {
+					name = "Debugger 3"
+					design = "debug3"
+					graphical_culture = "mammalian_01"
+				}
+				set_location = event_target:debuglocation
+			}
+		}
+
+		# debug 4
+		create_fleet = {
+			name = "Debug Fleet 4"
+			settings = { spawn_debris = no }
+			effect = {
+				set_owner = event_target:debugcountry
+				create_ship = {
+					name = "Debugger 4"
+					design = "debug4"
+					graphical_culture = "mammalian_01"
+				}
+				set_location = event_target:debuglocation
+			}
+		}
+
+		# debug 5
+		create_fleet = {
+			name = "Debug Fleet 5"
+			settings = { spawn_debris = no }
+			effect = {
+				set_owner = event_target:debugcountry
+				create_ship = {
+					name = "Debugger 5"
+					design = "debug5"
+					graphical_culture = "mammalian_01"
+				}
+				set_location = event_target:debuglocation
+			}
+		}
+	}
+}
+
+# component focus test
+event = {
+	id = tankdebug.2
+	is_triggered_only = yes
+	hide_window = yes
+	immediate = {
+		create_fleet = {
+			name = "Friendly Fleet 1"
+			settings = { spawn_debris = no }
+			effect = {
+				set_owner = event_target:debugplayer
+				create_ship = {
+					name = "Test 1"
+					design = "component1"
+					graphical_culture = "mammalian_01"
+				}
+				set_location = event_target:debugfriendlylocation
+			}
+		}
+		create_fleet = {
+			name = "friendly Fleet 2"
+			settings = { spawn_debris = no }
+			effect = {
+				set_owner = event_target:debugplayer
+				create_ship = {
+					name = "Test 2"
+					design = "component2"
+					graphical_culture = "mammalian_01"
+				}
+				set_location = event_target:debugfriendlylocation
+			}
+		}
+		create_fleet = {
+			name = "friendly Fleet 3"
+			settings = { spawn_debris = no }
+			effect = {
+				set_owner = event_target:debugplayer
+				create_ship = {
+					name = "Test 3"
+					design = "component3"
+					graphical_culture = "mammalian_01"
+				}
+				set_location = event_target:debugfriendlylocation
+			}
+		}
+		create_fleet = {
+			name = "friendly Fleet 4"
+			settings = { spawn_debris = no }
+			effect = {
+				set_owner = event_target:debugplayer
+				create_ship = {
+					name = "Test 4"
+					design = "component4"
+					graphical_culture = "mammalian_01"
+				}
+				set_location = event_target:debugfriendlylocation
+			}
+		}
+	}
+}
+
+event = {
+	id = tankdebug.3
+	is_triggered_only = yes
+	hide_window = yes
+	immediate = {
+		event_target:debuglocation = {
+			solar_system = {
+				every_fleet_in_system = { destroy_fleet = this }
+			}
+		}
+	}
+}
+

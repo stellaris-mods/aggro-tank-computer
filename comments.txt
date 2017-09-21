@@ -1,0 +1,48 @@
+# We tie it in to the vanilla tech tree, which looks like this:
+# tech_combat_computers_1:0 "Specialized Combat Computers"
+# tech_combat_computers_2:0 "Extended Combat Algorithms"
+# tech_combat_computers_3:0 "Sentient Combat Simulations"
+
+# XXX I designed ships specifically for the AI in global ship designs.
+# If we don't set should_ai_use on these computers, the auto build will
+# use them.
+# So what I do is created set ship templates for them to use, and every
+# 30 days I randomly allow AI empires to build those ships.
+
+# So, about the movement speed.
+# Corvette gets 20% speed from computers + 60% from thrusters
+# These bonuses seem to be additive, so * 1.8
+# Corvette base is 1.75
+# So normal Corvette combat speed at max level should be 3.15, rounded down
+# That's the speed we need to match.
+
+# XXX THE SPEED CALCULATIONS BELOW ARE WRONG
+# It seems the game actually treats battleships differently than
+# cruisers and destroyers, and I have not figured it out. I didn't need to,
+# because I hit the sweet spot for the modifier almost immediately :-)
+#
+# BATTLESHIP
+# Base = 0.75
+# Assume Afterburner L-slot: 60%
+# Assume Thrusters 4: 60%
+# Adjusted base = 0.75*2.2=1.65
+# We are missing 1.45, but since BS is always at the back of formation, we need
+# to be 10% faster than Corvettes. 3.1*1.1=3.41.
+# So we are missing 3.41-1.64 = 1.77
+#	Adjusted Base		*		X		= 		GOAL!
+# 		1.65			*		2.06	=		3.34
+
+# CRUISER AND DESTROYER
+# Base = 1.25
+# Our bonus is applied first
+# Assume afterburner M-slot: 30%
+# Assume thrusters: 60%
+# Adjusted base = 1.25*1.9=2.375
+# We are missing 0.725 (3.1-2.375)
+#	Adjusted Base		*		X		=		GOAL!
+#		2.375			*		0.98	=		3.111
+
+# These go in modifier
+# ship_hitpoints_mult = 0.05
+# ship_shield_regen_add = 15.0 # Regeneration per day
+# ship_auto_repair_add = 0.02 # Regenerates 2% ship-health per month

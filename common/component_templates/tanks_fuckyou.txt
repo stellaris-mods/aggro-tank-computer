@@ -1,0 +1,22 @@
+#utility_component_template = {
+#	key = "FUCKYOUCOMPUTER"
+#	size = small
+#	icon = "GFX_ship_part_computer_sentient"
+#	icon_frame = 1
+#	power = -20
+#	cost = 20
+#	class_restriction = { shipclass_military }
+#	size_restriction = { battleship }
+#	component_set = "combat_computers"
+#	ship_behavior = "battleship_sniper_real"
+#	should_ai_use = no
+
+#	ship_modifier = {
+#		ship_weapon_damage = 0.10
+#		ship_fire_rate_mult = 0.05
+#	}
+
+#	ai_weight = {
+#		weight = 0
+#	}
+#}

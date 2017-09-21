@@ -1,0 +1,91 @@
+# Depends on nothing
+# Provides debugplayer
+ensure_debug_player = {
+	if = {
+		limit = { not = { exists = event_target:debugplayer } }
+		every_country = {
+			limit = {
+				is_ai = no
+				is_country_type = default
+			}
+			save_global_event_target_as = debugplayer
+			every_owned_planet = {
+				add_modifier = {
+					modifier = hugeborder
+					days = -1
+				}
+			}
+		}
+	}
+}
+
+# Provides debugcountry
+# Depends on debugplayer
+ensure_debug_country = {
+	if = {
+		limit = { NOT = { exists = event_target:debugcountry } }
+		create_country = {
+			name = "Debug"
+			type = tankcountry
+		}
+		last_created_country = {
+			save_global_event_target_as = debugcountry
+			add_modifier = {
+				modifier = nodamagedebug
+				days = -1
+			}
+			add_modifier = {
+				modifier = manyhpdebug
+				days = -1
+			}
+			set_faction_hostility = { set_hostile = yes }
+			establish_communications_no_message = event_target:debugplayer
+		}
+	}
+}
+
+# Depends on debugplayer
+# Provides debuglocation
+ensure_debug_location = {
+	if = {
+		limit = { NOT = { exists = event_target:debuglocation } }
+		event_target:debugplayer = {
+			random_system_within_border = {
+				# Remove all spaceborne objects
+				every_fleet_in_system = { destroy_fleet = this }
+				#any_spaceport # planet/country XXX not sure if we need to remove them too, probably
+				every_system_planet = {
+					limit = {
+						has_spaceport = yes
+					}
+					destroy_fleet = spaceport
+				}
+				random_system_planet = {
+					limit = { is_capital = no }
+					save_global_event_target_as = debuglocation
+				}
+				random_system_planet = {
+					limit = {
+						not = { is_planet = event_target:debuglocation }
+					}
+					save_global_event_target_as = debugfriendlylocation
+				}
+			}
+		}
+	}
+}
+
+# Depends on debugplayer
+# Ensures friendlylocation
+# this is set in ensure_debug_location but maybe there was
+# only one planet in the system
+ensure_debug_friendlylocation = {
+	if = {
+		limit = { NOT = { exists = event_target:debugfriendlylocation } }
+		event_target:player = {
+			random_owned_planet = {
+				save_global_event_target_as = debugfriendlylocation
+			}
+		}
+	}
+}

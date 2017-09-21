@@ -1,0 +1,166 @@
+
+# aggressive = charge/charge
+# cruiser_default = orbit/orbit
+# battleship_default = none/charge
+# battleship_sniper = stay_at_range/charge
+# stellarite_default = flee/charge
+
+
+ship_behavior = {
+	name = "behavior_debug1"
+	preferred_attack_range = 25
+	formation_distance = 25
+	return_to_formation_distance = 60
+	collision_awareness = 3
+	collision_strafe = 1				# we want these ships to move nose-forward mostly or it looks weird with orbit
+	collision_radius = 1.5
+	attack_move_pattern = stationary			# these ships look good in orbit, mostly, cruiser is weird maybe?
+	passive_move_pattern = charge
+	desc = "TANK_BEHAVIOR_DESC"
+	targeting = {
+		component_target_weight_mult	= 100
+		armor_focus_value				= 0
+		keep_previous_target_bonus		= 0
+		damage_value					= 0
+		low_health_bonus				= 0
+		shield_focus_value				= 0
+		already_incoming_damage_penalty = 0
+		distance_to_fleet_penalty		= 0
+		size_difference_penalty			= 0
+		transport_target_penalty		= 0
+		civilian_target_penalty			= 0
+	}
+}
+
+
+ship_behavior = {
+	name = "behavior_debug2"
+	preferred_attack_range = 25
+	formation_distance = 25
+	return_to_formation_distance = 60
+	collision_awareness = 3
+	collision_strafe = 1				# we want these ships to move nose-forward mostly or it looks weird with orbit
+	collision_radius = 1.5
+	attack_move_pattern = stationary			# these ships look good in orbit, mostly, cruiser is weird maybe?
+	passive_move_pattern = charge
+	desc = "TANK_BEHAVIOR_DESC"
+	targeting = {
+		component_target_weight_mult	= 200
+		armor_focus_value				= 0
+		keep_previous_target_bonus		= 0
+		damage_value					= 0
+		low_health_bonus				= 0
+		shield_focus_value				= 0
+		already_incoming_damage_penalty = 0
+		distance_to_fleet_penalty		= 0
+		size_difference_penalty			= 0
+		transport_target_penalty		= 0
+		civilian_target_penalty			= 0
+	}
+}
+
+ship_behavior = {
+	name = "behavior_debug3"
+	preferred_attack_range = 25
+	formation_distance = 25
+	return_to_formation_distance = 60
+	collision_awareness = 3
+	collision_strafe = 1				# we want these ships to move nose-forward mostly or it looks weird with orbit
+	collision_radius = 1.5
+	attack_move_pattern = stationary			# these ships look good in orbit, mostly, cruiser is weird maybe?
+	passive_move_pattern = charge
+	desc = "TANK_BEHAVIOR_DESC"
+	targeting = {
+		component_target_weight_mult	= 300
+		armor_focus_value				= 0
+		keep_previous_target_bonus		= 0
+		damage_value					= 0
+		low_health_bonus				= 0
+		shield_focus_value				= 0
+		already_incoming_damage_penalty = 0
+		distance_to_fleet_penalty		= 0
+		size_difference_penalty			= 0
+		transport_target_penalty		= 0
+		civilian_target_penalty			= 0
+	}
+}
+
+ship_behavior = {
+	name = "behavior_debug4"
+	preferred_attack_range = 25
+	formation_distance = 25
+	return_to_formation_distance = 60
+	collision_awareness = 3
+	collision_strafe = 1				# we want these ships to move nose-forward mostly or it looks weird with orbit
+	collision_radius = 1.5
+	attack_move_pattern = stationary			# these ships look good in orbit, mostly, cruiser is weird maybe?
+	passive_move_pattern = charge
+	desc = "TANK_BEHAVIOR_DESC"
+	targeting = {
+		component_target_weight_mult	= 400
+		armor_focus_value				= 0
+		keep_previous_target_bonus		= 0
+		damage_value					= 0
+		low_health_bonus				= 0
+		shield_focus_value				= 0
+		already_incoming_damage_penalty = 0
+		distance_to_fleet_penalty		= 0
+		size_difference_penalty			= 0
+		transport_target_penalty		= 0
+		civilian_target_penalty			= 0
+	}
+}
+
+ship_behavior = {
+	name = "behavior_debug5"
+	preferred_attack_range = 25
+	formation_distance = 25
+	return_to_formation_distance = 60
+	collision_awareness = 3
+	collision_strafe = 1				# we want these ships to move nose-forward mostly or it looks weird with orbit
+	collision_radius = 1.5
+	attack_move_pattern = stationary			# these ships look good in orbit, mostly, cruiser is weird maybe?
+	passive_move_pattern = charge
+	desc = "TANK_BEHAVIOR_DESC"
+	targeting = {
+		component_target_weight_mult	= 500
+		armor_focus_value				= 0
+		keep_previous_target_bonus		= 0
+		damage_value					= 0
+		low_health_bonus				= 0
+		shield_focus_value				= 0
+		already_incoming_damage_penalty = 0
+		distance_to_fleet_penalty		= 0
+		size_difference_penalty			= 0
+		transport_target_penalty		= 0
+		civilian_target_penalty			= 0
+	}
+}
+
+ship_behavior = {
+	name = "behavior_debug_still"
+	preferred_attack_range = max
+	formation_distance = 25
+	return_to_formation_distance = 40
+	collision_awareness = 1
+	collision_strafe = 1				# we want these ships to move nose-forward mostly or it looks weird with orbit
+	collision_radius = 1
+	attack_move_pattern = stay_at_range			# these ships look good in orbit, mostly, cruiser is weird maybe?
+	passive_move_pattern = charge
+	desc = "TANK_BEHAVIOR_DESC"
+	targeting = {
+		component_target_weight_mult	= 0
+		armor_focus_value				= 0
+		keep_previous_target_bonus		= 100000
+		damage_value					= 0
+		low_health_bonus				= 0
+		shield_focus_value				= 0
+		already_incoming_damage_penalty = 0
+		distance_to_fleet_penalty		= 1000
+		size_difference_penalty			= 0
+		transport_target_penalty		= 0
+		civilian_target_penalty			= 0
+	}
+}
+
+

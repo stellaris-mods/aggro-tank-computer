@@ -1,0 +1,577 @@
+# reloadable with "reload behavior"
+#
+#
+#      __________! IMPORTANT !______________________________
+#      | ANY TIME the word "component" is used below      |
+#      | in the _entire_ text, at ANY point, it           |
+#      | _always_ includes:                               |
+#      | - Weapons, any weapon is also a component        |
+#      | - Utility slot items, they are components        |
+#      | - Aux slot items, they are components            |
+#      | - Items on the right side of the ship designer,  |
+#      |   like thrusters, sensor, etc.                   |
+#      | They are ALL components.                         |
+#      ----------------------------------------------------
+#
+#	___________ Other useful definitions __________________
+#	targeting()
+#		The calculated score of one components run through
+#		all score modifiers in targeting = {}.
+#
+#	primary target:
+#		This refers to the ships movement destination in space.
+#		The primary target is determined by whichever component
+#		on the hull returns the highest value from targeting().
+#
+#	DPS (damage per second):
+#		Stellaris obviously doesn't use damage per second, but
+#		that's what I like to write. In Stellaris, this is
+#		damage per day. It's the number after "Damage:" when you
+#		inspect a ship that has a sort of green clock-face behind it.
+#		This number is obviously an estimation, but it is used
+#		in calculations.
+#		Average damage output per day.
+#
+#	vanilla:
+#		Stellaris base game 1.3.1, without any addons.
+#		"Pure, like vanilla ice cream."
+#
+# =========================================================
+# =============== TARGETING  ==============================
+# =========================================================
+#
+# 1. It has been determined, quite conclusively, that each component on a
+#    ship has their own calculation based on targeting = {}, per enemy.
+#    So targeting={} is ran once PER component on the ship.
+#
+# 2. The component that produces the highest value from targeting()
+#    is the one that guides the ship movement (sets what is visually
+#    the ships target ingame).
+#
+# 3. Regardless of the apparent target in game, all other components
+#    continously run their targeting() and fire on whatever target
+#    they resolve to, if they happen to be in range (and is a component
+#    that can fire anything).
+#
+#    If these targeting()s resolve to targets that are NOT in range,
+#    these components will not fire at all. Even if there are, in fact,
+#    valid targets in range.
+#    This has not been conclusively verified.
+#    This is extremely rare, and mostly only noticable with stay_at_range.
+#
+# 4. It is unknown how often targeting() is recalculated, but often
+#    enough that changes in battlefield composition have apparent
+#    immediate effect, so this is not a question I want to spend time on.
+#    Also, often enough for already_incoming_damage_penalty to be relevant.
+#    Probably: once per day, and when any ship dies or enters combat.
+#
+# 5. There does not seem to be any hidden score modifiers used.
+#    Including hull points, which most people believe are used as
+#    a "base" targeting() value. That is not true.
+#
+#    You can try this yourself by spawning some hostile ships with all
+#    targeting={} set to 0 and then dropping in a fleet of friendlies
+#    from Corvette to Battleship and giving them different combat speeds
+#    and hull points; the target that hostiles attack is the first one
+#    that enters their weapon range, and they do not switch until it's dead.
+#
+# 6. It seems that all targeting() modifiers default to 0 if not set. But
+#    I have not tested this extensively. Setting them to 0 doesn't cost us that
+#    many bytes :-P
+#
+# 7. It's impossible to make a combat computer that (any of the below)
+#       7.1 / picks a random target.
+#       7.2 / picks a specific ship type as target
+#           - This is possible if you either;
+#             A. Control a required_component_set
+#             B. Overwrite vanilla components
+#       7.3 / picks targets based on proximity to friendly capital ships (defense)
+#       7.4 / picks targets based on their number of hitpoints
+#
+#	_______________________________
+#	low_health_bonus = flat bonus if estimated damage will kill the target in a few shots
+#
+#	keep_previous_target_bonus = flat bonus for keeping previous target
+#	  - We dont actually know what this means, but it sounds like it will be subtracted from the score.
+#
+#	shield_focus_value = score += estimated shield damage dealt * shield damage bonus * <shield_focus_value>
+#		Shield damage bonus is obviously from the component itself.
+#
+#	already_incoming_damage_penalty = score -= ( fleet total estimated damage to enemy / enemy max HP ) * <already_incoming_damage_penalty>.
+#		This is DPS, so if the fleet consists of 10 Battleships with 100 DPS each,
+#		all firing on the same target, that's 100x10=1000 DPS.
+#
+#		ALL vanilla combat computers set this to 200, so let us use that for demonstration
+#		purposes here.
+#
+#		Let's calculate it per vanilla ship (ships hull points):
+#		Corvette:    ( 1000 / 300  ) * 200 = 666
+#		Destroyer:   ( 1000 / 600  ) * 200 = 332
+#		Cruiser:     ( 1000 / 1600 ) * 200 = 125
+#		Battleship:  ( 1000 / 2400 ) * 200 = 83
+#
+#		When you compare it to the other penalties I explain later,
+#		you immediately understand that whoever wrote these combat computers at
+#		Paradox for 1.3 doesn't know how it works.
+#		I'm not blaming anyone except whoever was in charge of documenting it.
+#
+#	transport_target_penalty = if( target is transport ) score -= <transport_target_penalty>
+#	civilian_target_penalty = if( target is civilian ) score -= <civilian_target_penalty>
+#		If these don't make immediate sense, then good luck.
+#
+#	damage_value = score += estimated damage dealt ( including damage to shields ) * <damage_value>
+#		This modifier can be used to make sure your ships focus the highest-armored target.
+#		But it only considers hitpoints/armor once shields are depleted,
+#		or for ships that do not have any shields, for example.
+#
+#		Assuming targeting() is ran once per enemy per component.
+#		For example, a weapon that does 3 damage per shot, setting damage_value to -20:
+#		  0% armor:   3 * -20     = -60
+#		  50% armor:  1.5 * -20   = -30
+#		So a target with a higher armor rating would get a lower penalty.
+#
+#		We do NOT know what "estimated damage dealt" is based on. It could be:
+#		  - Weapons average damage (DPS)
+#		  - Pre-rolled damage of next shot
+#		  - Weapons minimum or maximum damage
+#		  - Anything else I can't think of
+#
+#	component_target_weight_mult = score += <weights based on target ship size from components> * <component_target_weight_mult>
+#		In component_templates/weapon files, weapon_component_templates sometimes have a target_weights = {}
+#		block set. This is where it's used. The best example of this is the DIMENSIONAL_HORROR_ weapon
+#		chain, where (just to pick one they all have in common) the 'cruiser' weight is:
+#
+#		DIMENSIONAL_HORROR_PRIMARY_WEAPON: 1500
+#		DIMENSIONAL_HORROR_LARGE_WEAPON: 5000
+#		DIMENSIONAL_HORROR_MEDIUM_WEAPON: 50000
+#		DIMENSIONAL_HORROR_SMALL_WEAPON: 1500
+#
+#		The only vanilla weapons that set this as of 1.3.1 are:
+#		- All Torpedoes (inc energy) - NOT missiles
+#		- All XL weapons
+#		- Guardian weapons
+#		So any behavior/combat computer that has this value set higher than 0
+#		will allow the torpedo/XL weapon slot to decide the ships primary target position.
+#		Unless the ship has a custom component/weapon with target_weights={}
+#		that produces a higher return from targeting() than the vanilla component.
+#		And if you do, any equipped XL weapon stands a chance of being unable to fire
+#		at its target (dead-ahead +/- 25 degrees).
+#
+#		It is important to note here, that as of 1.3.1, ALL vanilla ship_behaviors
+#		set this to 1.0, except for battleship_sniper, which sets 2.0.
+#		Which means that battleship_sniper ships are twice as likely to adhere to their
+#		weapons preset target weights as normal ships.
+#
+#		We do not know the default values for target_weights={}, which is a shame because
+#		most defined weapons in vanilla have not set it at all.
+#		We do not KNOW, but from limited testing, it seems that there are ZERO weights
+#		set by default, if target_weights={} is not explicitly set in the weapon_component_templates.
+#
+#		So, here's a weird solution that I tried, that actually works.
+#		In your component, whatever it may be - including a combat computer, set
+#		target_weights = {
+#			corvette = 1000
+#			leviathan = 10000 # from ISBS
+#			and whatever you want
+#		}
+#		Just note that your target_weights have to be higher than what the vanilla weapons set,
+#		to take precedence. The highest values they use are 5000.
+#
+#		I have confirmed that you can define "unknown" ship types in target_weights,
+#		and if a user has an addon that adds that ship type, it will work.
+#		If the user does NOT have this ship type from any addon, he will get an error.log entry like this:
+#		[component.cpp:72]: invalid ship_size [cruiserNSC].  file: common/component_templates/tanks_computers.txt line: 94
+#		But the game will simply ignore that ship type and still use the other "valid" target_weights.
+#
+#		NOTE: FOR SHIPS THAT CAN HAVE XL SLOTS
+#		If your custom component resolves targeting() to a higher value than the XL weapons target_weights,
+#		you are likely to end up with the ship pointing in the "wrong" direction for the XL weapon.
+#		Which means you need to keep your target_weights below 1000.
+#
+#		This is because the XL weapons set use_ship_kill_target = no, so they
+#		need to have the highest return from targeting().
+#
+#		Which makes their target the ship_kill_target (primary target, move target).
+#
+#	armor_focus_value = score += enemy armor * shield penetration value * <armor_focus_value>
+#		The following 1.3.1 vanilla components have shield penetration:
+#		- Torpedoes = 1
+#		- Arc Emitter = 1
+#		- Matter Disintegrator = 0.50
+#		- Strike Crafts (all) = 1
+#		(also 2 guardian weapons that I don't think the player can get)
+#
+#		Any component/weapon without a shield penetration value will set this to 0.
+#
+#		        Corvette     Destroyer     Cruiser       Battleship
+#		Armor   10           28            70            144
+#
+#		Example, for a torpedo-weapon evaluating a Destroyer target:
+#		        28 * 1 * armor_focus_value
+#
+#		This means that Torpedoboats and such will always fire on the
+#		target with the most armor, provided the bonus is high enough.
+#		That's probably why all vanilla computers now set it to only 5.
+#
+#		5:      10*1*5=50    28*1*5=140    70*1*5=350    144*1*5=720
+#
+#	distance_to_fleet_penalty		= score -= manhattan-distance between enemy and fleet * <distance_to_fleet_penalty>
+#		Manhattan distance is basically 2 straight lines:
+#		Distance from fleet, straight ahead, until it hits the axis that the enemy is on, then distance from that point
+#		directly to the enemy, so it looks kind of like this:
+#		#===============#
+#		#  |--------Y   #
+#		#  |            #
+#		#  |            #
+#		#  |            #
+#		#  X            #
+#		#               #
+#		#===============#
+#		And it's the total distance of the line from X to Y.
+#		Note that "fleet position" is not the ships position.
+#		It's the point in the star system that is closest to all ships in the fleet at the same time.
+#
+#		Let's say the enemy is 120 units directly in front, and 80 units to the right,
+#		and your weapon has a range of 60. score would be modified by -( ( 120 + 80 ) * penalty)
+#		All the standard game computers set penalty=20, and the battleship computers set penalty=0.
+#		Standard: -(200*20) = -4000
+#		Battleship: -(200*0) = 0
+#
+#	size_difference_penalty = score -= Abs( ship size - enemy ship size ) * <size_difference_penalty>.
+#		For anyone uninformed; abs=absolute=distance from zero, i.e. it converts
+#		any negative number to a positive, so a -4 size different becomes 4.
+#
+#		It's worth noting that size difference goes both ways because of Abs(),
+#		so we get a penalty if a ship is bigger than us, too.
+#		And we don't want that. Nobody actually does, I think.
+#
+#		I am not sure how the ship size value is calculated.
+#		Here's an educated guess:
+#		- In 00_ship_sizes.txt, there's a size_multiplier per ship type
+#		- In gfx/models/ships/*/*_ships_entities.asset, there are:
+#		   * @ship_scale per ship type
+#		   * game_data = { size = @ship_scale } per main hull frame entity
+#		And that's the only information I can find.
+#		The @ship_scales are NOT the same for the different cultures, so for this
+#		example we use mammalian.
+#		Note to self: Look at the values for other cultures and make sure they're not crazy.
+#
+#		Alternatively it may consider only size_multiplier.
+#
+#		(Spacestation is what you build above colonies)
+#		                          Corvette       Destroyer        Cruiser      Battleship     Spacestation
+#		@ship_scale               6.5            7.5              10.5         16             17
+#		size_multiplier           1              2                4            8              8
+#		=                         6.5            15               42           128            136
+#
+#		These are the default combat computers and what they set
+#		default, defensive, destroyer, cruiser: 100
+#		battleship, sniper: 500
+#		aggressive: -10000 (used by AI, except its bugged for 1.3.1)
+#		corvette: 0
+#
+#		And here's what size_difference_penalty resolves to for vanilla computers.
+#		Corvette vs any enemy: Always 0
+#		Destroyer vs Corvette: abs(15 - 6.5) * 100 = 850
+#		Destroyer vs Cruiser: abs(15 - 42) * 100 = 2700
+#		Destroyer vs Battleship: abs(15 - 128) * 100 = 11300
+#		Sniper vs Corvette: abs(128-6.5) * 500 = 60750
+#		Sniper vs Cruiser: abs(128-42) * 500 = 43000
+#		AI Aggressive Cruiser vs Corvette: abs(42 - 6.5) * -10000 = -355000
+#		AI Aggressive Cruiser vs Destroyer: abs(42 - 15) * -10000 = -270000
+#
+#		Those are some hefty penalties.
+#		But, of course, this might be wrong. Though if it is wrong,
+#		the only wrong part is probably that I included the @ship_scale.
+#		AI Aggressive Cruiser vs Corvette: abs(8 - 1) * -10000 = -70000
+#		That's still a MAJOR bonus. Remember the double negative.
+#
+#		We don't know how the calculator handles incoming negatives,
+#		which would in this case and angle_to_target_penalty become
+#		a double negative, which in most languages becomes plus.
+#
+#		There's some evidence that this might actually be the case, for example
+#		if you try to fight the Pirate Galleon with 40000hp, whatever it's called,
+#		(size_multiplier=8)
+#		it uses AI Aggressive Cruiser and it will relentlessly go after
+#		your smallest ships first. Like you can see, Corvettes would get a +355000
+#		to target bonus.
+#
+#		Which means this modifier doesn't work like Paradox thinks it works.
+#
+#	angle_to_target_penalty = score -= <angle_to_target_penalty> * ( angle to target / 180 )
+#		"People" usually set this to 1000/10000 without thinking, I think!
+#
+#		We don't know what they wanted to accomplish here, or how they implemented it.
+#
+#		"angle to target" is too vague, but IF it's simply an angle from head-on to 360,
+#		the division by 180 doesn't really make any sense, because then the penalty
+#		would be much, much higher if the target is to the ships immediate left, for example.
+#
+#		We can, I think safely, assume that 0 degrees is head on.
+#
+#		Say the penalty is 1000, like battleship default.
+#		To illustrate the problem with "angle to target" being 0-360 with division by 180:
+#		1000 * (0 / 180)   = 0
+#		1000 * (90 / 180)  = 500
+#		1000 * (180 / 180) = 1000
+#		1000 * (270 / 180) = 1500
+#
+#		So a potential target that was to our dead-left would get a penalty of -1500, vs
+#		a target dead-right -500. And that doesn't make any sense.
+#
+#		Ships always seem to turn right now for targetting purposes if you pay attention.
+#		So the calculations above might actually be the correct ones.
+#
+#		Which means this modifier doesn't work like Paradox thinks it works.
+#
+# =========================================================
+# =============== BEHAVIOR   ==============================
+# =========================================================
+#
+#	preferred_attack_range      max/min/median/12/412
+#		It MAY BE that the whole behavior-block (not just targeting={})
+#		is calculated per-component, and
+#		whichever component provides the highest targeting() score gets
+#		to decide what max/min/median means.
+#		That could explain, for example, a Cruiser with L, M, and S weapons
+#		set to an "orbit" attack pattern moving like a pinball while
+#		attacking a stationary target.
+#
+#		(in which case it would probably be the already_incoming_damage_penalty
+#		modifier changing the targeting() return value per-component)
+#
+#		This is almost entirely pure speculation and most certainly
+#		not correct.
+#
+#	move_pattern, both          stationary/charge/follow/orbit/none/stay_at_range/flee
+#		Can't be arsed to explain this LULZPATROL please just test it yourself.
+#		Ladies and gentlemen, THAT is entertainment!
+#		Or, err, something.
+#
+#		attack_move=stationary and preferred_attack_range=min on a ship will
+#		make the ship halt/stop just where the component with the highest return
+#		value from targeting() wants.
+#
+#	return_to_formation_distance = range
+#		If the ship suddenly finds itself further away than this from its primary
+#		target, it will switch from attack_move_pattern to passive_move_pattern and
+#		start moving towards its primary target.
+#
+#		A primary target-switch can happen:
+#			1. Whenever its primary target dies
+#			2. Whenever a component on the ship that is firing
+#			   on a different target from the primary one kills
+#			   ITS target, and finds a NEW target that resolves
+#			   targeting() to a HIGHER value than the current
+#			   primary target did.
+#			3. When a new fleet enters combat, and the component
+#			   that previously defined the primary target finds
+#			   a new one.
+#
+#	formation_distance = range
+#		This needs to be set to a value that is lower than the ships lowest-range
+#		weapon, or you can end up in a situation where some weapons simply dont
+#		have any valid targets in range.
+#
+#		(but obviously you don't need to care about PD weapons, like you dont
+#		need to care about any weapons, but a player zooming in on his ships
+#		and noticing the PD weapons not firing will simply think "ah, no
+#		missiles/torpedoes/fighters are in range", but of course these weapons
+#		DO fire on other ships if they can)
+#
+#		The lowest ranged vanilla weapon is the Small Autocannon, I think.
+#		At 20 range. The next weapon after that I believe is 30.
+#
+#	collision_awareness = number
+#		I am not sure how to quantify this, but setting it to 0 will "let" the
+#		ship simply glide straight through enemies.
+#		Set it to 0.1 or higher, and the ship will start trying to avoid
+#		colliding (which has no negative effects except it looks weird) with
+#		other ships at increasing intensity.
+#
+#		Try setting it to 40 and set collision_radius = 0.1 for a fun
+#		experience.
+#
+#	collision_strafe = number
+#		This number lets you specify how much the ship should prioritise
+#		strafing, as opposed to turning its hull, whenever it wants to dodge
+#		or move anywhere.
+#
+#		Try setting it to 4 and set attack_move_pattern=orbit.
+#
+#	collision_radius = number
+#		In ship_sizes/.txt, each ship has a defined collision_radius already.
+#		This is a multiplier on that number, allowing you, for example,
+#		to make plow-type ships or "empty" ships that allow anyone, even
+#		if they have collision_awareness set high, to move through it.
+#
+# ================================================
+#
+
+ship_behavior = {
+	name = "behavior_tank_battleship"
+
+	preferred_attack_range = 20
+	formation_distance = 20
+	return_to_formation_distance = 100
+
+	collision_awareness = 0.3
+	collision_strafe = 1.6
+	collision_radius = 0.7
+
+	# Follow produces too much movement for XL weapons.
+	attack_move_pattern = stay_at_range
+	passive_move_pattern = charge
+
+	desc = "TANK_BEHAVIOR_DESC"
+
+	targeting = {
+		# component_target_weight_mult =
+		# 0 (all components/weapons without target_weights)
+		# 1000 (lowest XL weapon weight)
+		# 5000 (highest XL weight)
+		# Our own target_weights go from 10000 to 6000
+		# The increments are 1000 per ship type
+		component_target_weight_mult    = 1 # God dammit why can't I scale it down from 1000s
+		armor_focus_value               = 0
+		# We don't actually know how this works yet
+		angle_to_target_penalty         = 25
+		keep_previous_target_bonus      = 0 # 3100 That god damn bastard energy weapon can fuck itself
+		damage_value                    = 2.1
+		low_health_bonus                = 0
+		shield_focus_value              = 0
+		already_incoming_damage_penalty = 0
+		# Gives us a penalty of 11 for anything that is manhattan-distance of 200 or more
+		distance_to_fleet_penalty       = 0.055
+		size_difference_penalty         = 0
+		transport_target_penalty        = 0
+		civilian_target_penalty         = 0
+	}
+}
+
+ship_behavior = {
+	name = "behavior_tank_cruiser"
+	preferred_attack_range = 15
+	formation_distance = 60
+	return_to_formation_distance = 80
+	collision_awareness = 0.4
+	collision_strafe = 0.5
+	collision_radius = 2
+	attack_move_pattern = follow
+	passive_move_pattern = orbit
+	desc = "TANK_BEHAVIOR_DESC"
+	targeting = {
+		# Scale it down from 6000 to 60
+		# It may be that this doesn't actually work. It seems that some weapons still operate
+		# with their 1000* values even though we multiply by 0.01. What the hell?
+		# Could it be ADDITIVE?! So that if you have 2x components that set
+		# corvette = 10000
+		# both component weights are added up for each individual components run through
+		# targeting() ?! That would be craycray if it were true, this needs some srs testing guise
+		component_target_weight_mult    = 0.01 #0.01
+		armor_focus_value               = 0
+		# One-size difference penalty
+		# If we set this to 270 or lower, they switch targets when the shields are depleted
+		# I have not calculated why or how
+		keep_previous_target_bonus      = 310
+		# Avg dmg on whirlwind missiles is 5.9 before armor reduction
+		# BS has 77%:          1.35 * -2.1    = -2.8
+		# Cruiser has 44%:     3.9  * -2.1    = -8.2
+		# Destroyer has 29%:   4.19 * -2.1    = -8.8
+		# Corvette has 8%:     5.42 * -2.1    = -11.4
+		damage_value                    = 2.1
+		low_health_bonus                = 0
+		shield_focus_value              = 0
+		already_incoming_damage_penalty = 1
+		# Gives us a penalty of 10 for anything that is manhattan-distance of 200 or more
+		distance_to_fleet_penalty       = 0.05
+		size_difference_penalty         = 0
+		transport_target_penalty        = 0
+		civilian_target_penalty         = 0
+	}
+}
+
+ship_behavior = {
+	name = "behavior_tank_destroyer"
+	preferred_attack_range = 15
+	formation_distance = 100
+	return_to_formation_distance = 120
+	collision_awareness = 0.4
+	# we want these ships to move nose-forward mostly or it looks weird with orbit
+	collision_strafe = 0.4
+	collision_radius = 1.2
+	attack_move_pattern = orbit
+	passive_move_pattern = charge
+	desc = "TANK_BEHAVIOR_DESC"
+	targeting = {
+		component_target_weight_mult    = 0.01
+		armor_focus_value               = 0
+		keep_previous_target_bonus      = 275
+		damage_value                    = 2.1
+		low_health_bonus                = 0
+		shield_focus_value              = 0
+		already_incoming_damage_penalty = 1
+		distance_to_fleet_penalty       = 0.05
+		size_difference_penalty         = 10
+		transport_target_penalty        = 0
+		civilian_target_penalty         = 0
+	}
+}
+
+ship_behavior = {
+	name = "behavior_tank_heavy"
+	preferred_attack_range = 30
+	formation_distance = 30
+	return_to_formation_distance = 100
+	collision_awareness = 0.3
+	collision_strafe = 1.6
+	collision_radius = 0.7
+	attack_move_pattern = stay_at_range
+	passive_move_pattern = charge
+	desc = "TANK_BEHAVIOR_DESC"
+	targeting = {
+		component_target_weight_mult    = 0.01
+		armor_focus_value               = 0
+		angle_to_target_penalty         = 0
+		keep_previous_target_bonus      = 0
+		damage_value                    = 2.1
+		low_health_bonus                = 0
+		shield_focus_value              = 0
+		already_incoming_damage_penalty = 0
+		distance_to_fleet_penalty       = 0.1
+		size_difference_penalty         = 0
+		transport_target_penalty        = 0
+		civilian_target_penalty         = 0
+	}
+}
+
+ship_behavior = {
+	name = "behavior_tank_dreadnought"
+	preferred_attack_range = 25
+	formation_distance = 25
+	return_to_formation_distance = 100
+	collision_awareness = 0.3
+	collision_strafe = 1.6
+	collision_radius = 0.7
+	attack_move_pattern = stay_at_range
+	passive_move_pattern = charge
+	desc = "TANK_BEHAVIOR_DESC"
+	targeting = {
+		component_target_weight_mult    = 0.01
+		armor_focus_value               = 0
+		angle_to_target_penalty         = 0
+		keep_previous_target_bonus      = 0
+		damage_value                    = 2.1
+		low_health_bonus                = 0
+		shield_focus_value              = 0
+		already_incoming_damage_penalty = 0
+		distance_to_fleet_penalty       = 0.1
+		size_difference_penalty         = 0
+		transport_target_penalty        = 0
+		civilian_target_penalty         = 0
+	}
+}
+
+
+

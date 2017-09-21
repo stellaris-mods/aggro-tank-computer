@@ -1,0 +1,20 @@
+tankcountry = {
+	ai = {
+		enabled = yes
+		declare_war = no
+		colonizer = no
+		internal_policies = no
+		construction = no
+	}
+	faction = {
+		hostile = yes
+		needs_border_access = no
+		generate_borders = no
+		needs_colony = no
+	}
+	modules = {
+		exclusive_diplomacy_module = {} # Nothing is allowed, but we need this for relationships.
+		basic_technology_module = {}
+		standard_event_module = {}
+	}
+}
