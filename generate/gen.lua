@@ -1,7 +1,3 @@
-local outputPath = "../common/component_templates/"
-local filePrefix = "tanks_"
-local fileSuffix = ".txt"
-local rawTemplate = "template.txt"
 
 local icon = {
 	"GFX_ship_part_computer_tank_basic",
@@ -67,7 +63,7 @@ local defaults = {
 }
 local ship = {
 	mt = {
-		__index = function(t, k)
+		__index = function(_, k)
 			return defaults[k]
 		end
 	}
@@ -78,39 +74,113 @@ function ship.new(t)
 end
 --ship.mt
 
-local templateHandle = io.open(rawTemplate, "r")
-local template = templateHandle:read("*all")
-templateHandle:close()
+local template = [[
+utility_component_template = {
+	key = "[key]"
+	size = small
+	icon = "[icon]"
+	icon_frame = 1
+	power = [power]
+	cost = [cost]
+	class_restriction = { shipclass_military }
+	size_restriction = { [size] }
+	component_set = "combat_computers"
+	ship_behavior = "[behavior]"
+	prerequisites = { "[prereq]" }
+	upgrades_to = "[upgrade]"
+	ship_modifier = {
+		ship_weapon_damage = [damage]
+		ship_fire_rate_mult = [firerate]
+	}
+	modifier = {
+		ship_upkeep_mult = [upkeep]
+		ship_evasion_mult = [evasion]
+		ship_combat_speed_mult = [combat_speed]
+		ship_evasion_add = [evasion_add]
 
-local function downOne(ship)
-	ship.hullpoints = ship.hullpoints - 0.25
-	ship.shields = ship.shields - 0.25
-	ship.cost = 100 * math.floor(((ship.cost * 0.75) + 50) / 100)
-	ship.power = ship.power + ship.power_step
-	ship.firerate = ship.firerate - 0.1
-	ship.weight = ship.weight - 1
+		ship_hitpoints_mult = [hullpoints]
+		ship_shield_hp_mult = [shields]
+		ship_armor_mult = [armor]
+		ship_auto_repair_add = [regen_hull]
+		ship_shield_regen_add = [regen_shield]
+		ship_shield_regen_mult = [regen_shield_mult]
+	}
+	# Prevent us from getting the effect of other support auras I guess?
+	# At least we tried.
+	friendly_aura = {
+		name = "tank_aura"
+		radius = 1
+		apply_on = ships
+		stack_info = {
+			id = friendly_support_aura
+			priority = 100
+		}
+	}
+	target_weights = {
+		corvette = [corvette]
+		destroyer = [destroyer]
+		cruiser = [cruiser]
+		battleship = [battleship]
+		titan = [titan]
+		leviathan = [leviathan]
+		rs_battlecruiser = [rs_battlecruiser]
+		rs_dreadnought = [rs_dreadnought]
+		rs_heavy_dreadnought_type_a = [rs_heavy_dreadnought]
+		rs_heavy_dreadnought_type_b = [rs_heavy_dreadnought]
+		rs_heavy_dreadnought_type_c = [rs_heavy_dreadnought]
+		rs_heavy_dreadnought_type_d = [rs_heavy_dreadnought]
+		rs_heavy_dreadnought_type_e = [rs_heavy_dreadnought]
+		rs_heavy_dreadnought_type_f = [rs_heavy_dreadnought]
+		rs_heavy_dreadnought_type_g = [rs_heavy_dreadnought]
+		rs_ea_cruiser = [rs_ea_cruiser]
+		rs_support_cruiser = [rs_support_cruiser]
+		Frigate = [frigate]
+		LightCarrier = [lightcarrier]
+		StrikeCruiser = [strikecruiser]
+		Battlecruiser = [rs_battlecruiser]
+		Carrier = [carrier]
+		Dreadnough = [dreadnought]
+		Superdreadnought = [commanddreadnought]
+	}
+	ai_weight = {
+		weight = 0
+		modifier = {
+			weight = [weight]
+			has_country_flag = folk_tanks_ai_use
+		}
+	}
+}
+]]
+
+local function downOne(s)
+	s.hullpoints = s.hullpoints - 0.25
+	s.shields = s.shields - 0.25
+	s.cost = 100 * math.floor(((s.cost * 0.75) + 50) / 100)
+	s.power = s.power + s.power_step
+	s.firerate = s.firerate - 0.1
+	s.weight = s.weight - 1
 end
 
 -- name becomes the filename only
-local function parseship(name, ship)
-
+local function parseship(name, s)
 	-- God dammit we need to write the computers out in 1-3 order
 	-- And if we process it from 1-3, we need to start our calculations from
 	-- level 1, and I dont care about 1 and 2.
 	local tbl = {}
 	for i = 3, 1, -1 do
 		local tmp = template
-		ship.upgrade = ship.key
-		ship.key = ship.key_prefix .. tostring(i)
-		ship.icon = icon[i]
-		ship.prereq = tech[i]
+		s.upgrade = s.key
+		s.key = s.key_prefix .. tostring(i)
+		s.icon = icon[i]
+		s.prereq = tech[i]
 		for k in pairs(defaults) do
-			tmp = tmp:gsub("%[" .. k .. "%]", ship[k])
+			tmp = tmp:gsub("%[" .. k .. "%]", s[k])
 		end
 		tbl[i] = tmp
-		downOne(ship)
+		downOne(s)
 	end
-	local f = io.open(outputPath .. filePrefix .. name .. fileSuffix, "w+")
+	local fmt = "../common/component_templates/tanks_%s.txt"
+	local f = io.open(fmt:format(name), "w+")
 	f:write(tbl[1])
 	f:write(tbl[2])
 	f:write(tbl[3])
