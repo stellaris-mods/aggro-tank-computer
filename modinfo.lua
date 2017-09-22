@@ -8,4 +8,7 @@ return {
 	remote_file_id = 786514324,
 	readme = "readme.md",
 	steambb = "steam.bbcode",
+	zip = {
+		gitignore = true,
+	}
 }
