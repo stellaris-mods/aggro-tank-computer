@@ -29,7 +29,7 @@ local defaults = {
 	cost = 2000,
 
 	behavior = "behavior_tank_battleship",
-	size = "battleship battleshipNSC",
+	size = "battleship",
 
 	-- set these per level per ship
 	key_prefix = "COMPUTER_FOLK_BATTLESHIP_",
@@ -139,7 +139,7 @@ utility_component_template = {
 		StrikeCruiser = [strikecruiser]
 		Battlecruiser = [rs_battlecruiser]
 		Carrier = [carrier]
-		Dreadnough = [dreadnought]
+		Dreadnought = [dreadnought]
 		Superdreadnought = [commanddreadnought]
 	}
 	ai_weight = {
@@ -209,7 +209,7 @@ do
 
 		behavior = "behavior_tank_cruiser",
 		key_prefix = "COMPUTER_FOLK_CRUISER_",
-		size = "cofh_se_cruiser_hvy cruiser rs_battlecruiser cruiserNSC facruiser Battlecruiser",
+		size = "cofh_se_cruiser_hvy cruiser rs_battlecruiser Battlecruiser",
 	})
 	parseship("cruiser", cruiser)
 end
@@ -231,7 +231,7 @@ do
 
 		behavior = "behavior_tank_destroyer",
 		key_prefix = "COMPUTER_FOLK_DESTROYER_",
-		size = "cofh_se_destroyer_hvy destroyer destroyerNSC Escort Frigate",
+		size = "cofh_se_destroyer_hvy destroyer Frigate",
 	})
 	parseship("destroyer", destroyer)
 end
