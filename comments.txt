@@ -3,7 +3,7 @@
 # tech_combat_computers_2:0 "Extended Combat Algorithms"
 # tech_combat_computers_3:0 "Sentient Combat Simulations"
 
-# XXX I designed ships specifically for the AI in global ship designs.
+# I designed ships specifically for the AI in global ship designs.
 # If we don't set should_ai_use on these computers, the auto build will
 # use them.
 # So what I do is created set ship templates for them to use, and every
@@ -16,7 +16,7 @@
 # So normal Corvette combat speed at max level should be 3.15, rounded down
 # That's the speed we need to match.
 
-# XXX THE SPEED CALCULATIONS BELOW ARE WRONG
+# THE SPEED CALCULATIONS BELOW ARE WRONG
 # It seems the game actually treats battleships differently than
 # cruisers and destroyers, and I have not figured it out. I didn't need to,
 # because I hit the sweet spot for the modifier almost immediately :-)
