@@ -125,6 +125,7 @@ utility_component_template = {
 		leviathan = [leviathan]
 		rs_battlecruiser = [rs_battlecruiser]
 		rs_dreadnought = [rs_dreadnought]
+		rs_heavy_dreadnought = [rs_heavy_dreadnought]
 		rs_heavy_dreadnought_type_a = [rs_heavy_dreadnought]
 		rs_heavy_dreadnought_type_b = [rs_heavy_dreadnought]
 		rs_heavy_dreadnought_type_c = [rs_heavy_dreadnought]
@@ -144,10 +145,6 @@ utility_component_template = {
 	}
 	ai_weight = {
 		weight = 0
-		modifier = {
-			weight = [weight]
-			has_country_flag = folk_tanks_ai_use
-		}
 	}
 }
 ]]
@@ -271,7 +268,7 @@ do
 
 		behavior = "behavior_tank_heavy",
 		key_prefix = "COMPUTER_FOLK_HEAVY_",
-		size = "rs_heavy_dreadnought_type_a rs_heavy_dreadnought_type_b rs_heavy_dreadnought_type_c rs_heavy_dreadnought_type_d rs_heavy_dreadnought_type_e rs_heavy_dreadnought_type_f rs_heavy_dreadnought_type_g",
+		size = "rs_heavy_dreadnought rs_heavy_dreadnought_type_a rs_heavy_dreadnought_type_b rs_heavy_dreadnought_type_c rs_heavy_dreadnought_type_d rs_heavy_dreadnought_type_e rs_heavy_dreadnought_type_f rs_heavy_dreadnought_type_g",
 	})
 	parseship("heavydread", heavydread)
 end
